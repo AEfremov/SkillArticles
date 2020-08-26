@@ -27,6 +27,29 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
                 date = article.date.format()
             )
         }
+
+        subscribeOnDataSource(getArticleContent()){ content, state ->
+            content ?: return@subscribeOnDataSource null
+            state.copy(
+                isLoadingContent = false,
+                content = content
+            )
+        }
+
+        subscribeOnDataSource(getArticlePersonalInfo()){ info,state ->
+            info ?: return@subscribeOnDataSource null
+            state.copy(
+                isBookmark = info.isBookmark,
+                isLike = info.isLike
+            )
+        }
+
+        subscribeOnDataSource(repository.getAppSettings()) {settings, state ->
+            state.copy(
+                isDarkMode = settings.isDarkMode,
+                isBigText = settings.isBigText
+            )
+        }
     }
 
     // load text from network
