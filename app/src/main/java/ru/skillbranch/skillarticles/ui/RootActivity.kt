@@ -25,7 +25,7 @@ class RootActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_root)
         setupToolbar()
-        setupBottomBar()
+        setupBottombar()
         setupSubmenu()
 
         val vmFactory = ViewModelFactory("0")
@@ -46,7 +46,7 @@ class RootActivity : AppCompatActivity() {
         val logo = if(toolbar.childCount > 2) toolbar.getChildAt(2) as? ImageView else null
         logo?.scaleType = ImageView.ScaleType.CENTER_CROP
 
-        val lp = logo?.layoutParams as? Toolbar.LayoutParams?
+        val lp = logo?.layoutParams as? androidx.appcompat.widget.Toolbar.LayoutParams?
         lp?.let {
             it.width = this.dpToIntPx(40)
             it.height = this.dpToIntPx(40)
@@ -87,41 +87,43 @@ class RootActivity : AppCompatActivity() {
         val snackbar = Snackbar.make(coordinator_container, notify.message, Snackbar.LENGTH_LONG)
             .setAnchorView(bottombar)
 
-            when (notify) {
-                is Notify.TextMessage -> { /* nothing */ }
-                is Notify.ActionMessage -> {
-                    with(snackbar) {
-                        setActionTextColor(getColor(R.color.color_accent_dark))
-                        setAction(notify.actionLabel){
-                            notify.actionHandler.invoke()
-                        }
-                    }
-                }
-                is Notify.ErrorMessage -> {
-                    with(snackbar){
-                        setBackgroundTint(getColor(R.color.design_default_color_error))
-                        setTextColor(getColor(android.R.color.white))
-                        setActionTextColor(getColor(android.R.color.white))
-                        setAction(notify.errLabel){
-                            notify.errHandler?.invoke()
-                        }
+        when(notify){
+            is Notify.TextMessage -> { /* nothing*/ }
+
+            is Notify.ActionMessage -> {
+                with(snackbar) {
+                    setActionTextColor(getColor(R.color.color_accent_dark))
+                    setAction(notify.actionLabel){
+                        notify.actionHandler.invoke()
                     }
                 }
             }
 
+            is Notify.ErrorMessage -> {
+                with(snackbar){
+                    setBackgroundTint(getColor(R.color.design_default_color_error))
+                    setTextColor(getColor(android.R.color.white))
+                    setActionTextColor(getColor(android.R.color.white))
+                    setAction(notify.errLabel){
+                        notify.errHandler?.invoke()
+                    }
+                }
+            }
+        }
+
         snackbar.show()
     }
 
-    private fun setupBottomBar() {
+    private fun setupBottombar() {
+        btn_text_up.setOnClickListener { viewModel.handleUpText() }
+        btn_text_down.setOnClickListener { viewModel.handleDownText() }
+        switch_mode.setOnClickListener { viewModel.handleNightMode() }
+    }
+
+    private fun setupSubmenu() {
         btn_like.setOnClickListener { viewModel.handleLike() }
         btn_bookmark.setOnClickListener { viewModel.handleBookmark() }
         btn_share.setOnClickListener { viewModel.handleShare() }
         btn_settings.setOnClickListener { viewModel.handleToggleMenu() }
-    }
-
-    private fun setupSubmenu() {
-        btn_text_up.setOnClickListener { viewModel.handleUpText() }
-        btn_text_down.setOnClickListener { viewModel.handleDownText() }
-        switch_mode.setOnClickListener { viewModel.handleNightMode() }
     }
 }
