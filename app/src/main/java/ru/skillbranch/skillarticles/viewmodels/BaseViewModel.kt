@@ -5,12 +5,13 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.*
 
 abstract class BaseViewModel<T>(initState: T) : ViewModel() {
+
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     val notifications = MutableLiveData<Event<Notify>>()
 
     /***
      * Инициализация начального состояния аргументом конструктоа, и объявления состояния как
-     * MediatorLiveData - медиатор исспользуется для того чтобы учитывать изменяемые данные модели
+     * MediatorLiveData - медиатор используется для того чтобы учитывать изменяемые данные модели
      * и обновлять состояние ViewModel исходя из полученных данных
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
@@ -112,7 +113,7 @@ class Event<out E>(private val content: E) {
 class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit) : Observer<Event<E>> {
 
     override fun onChanged(event: Event<E>?) {
-        //если есть необработанное событие (контент) передай в качестве аргумента в лямбду
+        // если есть необработанное событие (контент) передай в качестве аргумента в лямбду
         // onEventUnhandledContent
         event?.getContentIfNotHandled()?.let {
             onEventUnhandledContent(it)
@@ -126,7 +127,7 @@ sealed class Notify(val message: String) {
     data class ActionMessage(
         val msg: String,
         val actionLabel: String,
-        val actionHandler: (() -> Unit)
+        val actionHandler: (() -> Unit)?
     ) : Notify(msg)
 
     data class ErrorMessage(

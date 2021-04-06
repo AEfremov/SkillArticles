@@ -75,7 +75,7 @@ object NetworkDataHolder {
     fun loadArticleContent(articleId: String): LiveData<List<Any>?> {
         GlobalScope.launch {
             if (isDelay) delay(1500)
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 content.value = listOf(longText)
             }
 
@@ -89,7 +89,7 @@ object NetworkDataHolder {
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-    fun clearData(){
+    fun clearData() {
         content.postValue(null)
     }
 }

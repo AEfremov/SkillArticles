@@ -31,7 +31,7 @@ class ArticleViewModel(private val articleId: String) :
             )
         }
 
-        subscribeOnDataSource(getArticleContent()){ content, state ->
+        subscribeOnDataSource(getArticleContent()) { content, state ->
             content ?: return@subscribeOnDataSource null
             state.copy(
                 isLoadingContent = false,
@@ -39,7 +39,7 @@ class ArticleViewModel(private val articleId: String) :
             )
         }
 
-        subscribeOnDataSource(getArticlePersonalInfo()){ info,state ->
+        subscribeOnDataSource(getArticlePersonalInfo()) { info,state ->
             info ?: return@subscribeOnDataSource null
             state.copy(
                 isBookmark = info.isBookmark,
@@ -47,6 +47,7 @@ class ArticleViewModel(private val articleId: String) :
             )
         }
 
+        // subscribe on settings
         subscribeOnDataSource(repository.getAppSettings()) {settings, state ->
             state.copy(
                 isDarkMode = settings.isDarkMode,
@@ -60,7 +61,7 @@ class ArticleViewModel(private val articleId: String) :
         return repository.loadArticleContent(articleId)
     }
 
-    // load data from mdb
+    // load data from db
     override fun getArticleData() : LiveData<ArticleData?> {
         return repository.getArticle(articleId)
     }

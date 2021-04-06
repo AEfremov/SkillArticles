@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import ru.skillbranch.skillarticles.data.*
 
 object ArticleRepository {
+
     private val local = LocalDataHolder
     private val network = NetworkDataHolder
 

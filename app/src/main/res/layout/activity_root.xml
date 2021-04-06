@@ -15,15 +15,14 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
-            android:theme="@style/ArticleBarsTheme"
-            style="@style/ArticleToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:logo="@drawable/logo_placeholder"
             app:title="@string/app_name"
             app:subtitle="loading..."
-            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"/>
-
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+            android:theme="@style/ArticleBarsTheme"
+            style="@style/ArticleToolbar" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -37,7 +36,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:text="root_loading"/>
-
     </androidx.core.widget.NestedScrollView>
 
     <ru.skillbranch.skillarticles.ui.custom.ArticleSubmenu
