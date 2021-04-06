@@ -24,10 +24,12 @@ class ArticleViewModel(private val articleId: String) :
             state.copy(
                 shareLink = article.shareLink,
                 title = article.title,
-                author = article.title,
                 category = article.category,
                 categoryIcon = article.categoryIcon,
-                date = article.date.format()
+                date = article.date.format(),
+                author = article.author,
+                poster = article.poster,
+                content = article.content
             )
         }
 
@@ -114,7 +116,7 @@ class ArticleViewModel(private val articleId: String) :
         val msg = if (!isLiked) Notify.TextMessage("Mark is liked")
         else {
             Notify.ActionMessage(
-                "Don't like it anymore", // message
+                "Don`t like it anymore", // message
                 "No, still like it", // action label on snackbar
                 toggleLike // handler function, if press "No, still like it" on snackbar, then toggle
             )
