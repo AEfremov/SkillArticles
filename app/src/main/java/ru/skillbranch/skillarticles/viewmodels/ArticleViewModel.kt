@@ -1,6 +1,8 @@
 package ru.skillbranch.skillarticles.viewmodels
 
+import android.os.Bundle
 import android.util.Log
+import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
@@ -8,6 +10,10 @@ import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
 import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.format
+import ru.skillbranch.skillarticles.extensions.indexesOf
+import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
+import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
+import ru.skillbranch.skillarticles.viewmodels.base.Notify
 
 class ArticleViewModel(private val articleId: String) :
     BaseViewModel<ArticleState>(ArticleState()),
@@ -15,7 +21,6 @@ class ArticleViewModel(private val articleId: String) :
 {
 
     private val repository = ArticleRepository
-    private var menuIsShown: Boolean = false
 
     init {
         // subscribe to mutable data
@@ -41,7 +46,7 @@ class ArticleViewModel(private val articleId: String) :
             )
         }
 
-        subscribeOnDataSource(getArticlePersonalInfo()) { info,state ->
+        subscribeOnDataSource(getArticlePersonalInfo()) { info, state ->
             info ?: return@subscribeOnDataSource null
             state.copy(
                 isBookmark = info.isBookmark,
@@ -75,9 +80,7 @@ class ArticleViewModel(private val articleId: String) :
 
     // session state
     override fun handleToggleMenu() {
-        updateState { state ->
-            state.copy(isShowMenu = !state.isShowMenu).also { menuIsShown = !state.isShowMenu }
-        }
+        updateState { it.copy(isShowMenu = !it.isShowMenu) }
     }
 
     // app settings
@@ -132,31 +135,27 @@ class ArticleViewModel(private val articleId: String) :
     }
 
     override fun handleSearchMode(isSearch: Boolean) {
-        updateState {
-            it.copy(isSearch = isSearch)
-        }
+//        updateState { it.copy(isSearch = isSearch, isShowMenu = false, searchPosition = 0) }
+        updateState { it.copy(isSearch = isSearch) }
     }
 
     override fun handleSearch(query: String?) {
+        query ?: return
+        val result = (currentState.content.firstOrNull() as? String)
+            .indexesOf(query)
+            .map { it to it + query.length }
         updateState {
-            it.copy(searchQuery = query)
+//            it.copy(searchQuery = query, searchResults = result, searchPosition = 0)
+            it.copy(searchQuery = query, searchResults = result)
         }
     }
 
-    fun hideMenu() {
-        updateState { it.copy(isShowMenu = false) }
+    fun handleUpResult() {
+        updateState { it.copy(searchPosition = it.searchPosition.dec()) }
     }
 
-    fun showMenu() {
-        updateState { it.copy(isShowMenu = menuIsShown) }
-    }
-
-    fun handleSearchQuery(query: String?) {
-        updateState { it.copy(searchQuery = query) }
-    }
-
-    fun handleIsSearch(isSearch: Boolean) {
-        updateState { it.copy(isSearch = isSearch) }
+    fun handleDownResult() {
+        updateState { it.copy(searchPosition = it.searchPosition.inc()) }
     }
 }
 
@@ -182,4 +181,26 @@ data class ArticleState(
     val poster: String? = null, // обложка статьи
     val content: List<Any> = emptyList(), // контент
     val reviews: List<Any> = emptyList() // отзывы
-)
+) : IViewModelState {
+
+    override fun save(outState: Bundle) {
+        outState.putAll(
+            bundleOf(
+                "isSearch" to isSearch,
+                "searchQuery" to searchQuery,
+                "searchResults" to searchResults,
+                "searchPosition" to searchPosition
+            )
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun restore(savedState: Bundle): IViewModelState {
+        return copy(
+            isSearch = savedState["isSearch"] as Boolean,
+            searchQuery = savedState["searchQuery"] as? String,
+            searchResults = savedState["searchResults"] as List<Pair<Int, Int>>,
+            searchPosition = savedState["searchPosition"] as Int
+        )
+    }
+}

@@ -20,7 +20,7 @@ object LocalDataHolder {
     fun findArticle(articleId: String): LiveData<ArticleData?> {
         GlobalScope.launch {
             if (isDelay) delay(1000)
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 articleData.value = ArticleData(
                     title = "CoordinatorLayout Basic",
                     category = "Android",

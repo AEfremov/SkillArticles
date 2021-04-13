@@ -16,6 +16,9 @@ import ru.skillbranch.skillarticles.extensions.dpToPx
 import ru.skillbranch.skillarticles.ui.custom.behaviors.SubmenuBehavior
 import kotlin.math.hypot
 
+/**
+ * Custom Sub menu
+ */
 class ArticleSubmenu @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
