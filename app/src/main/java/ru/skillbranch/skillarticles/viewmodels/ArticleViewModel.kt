@@ -135,8 +135,8 @@ class ArticleViewModel(private val articleId: String) :
     }
 
     override fun handleSearchMode(isSearch: Boolean) {
-//        updateState { it.copy(isSearch = isSearch, isShowMenu = false, searchPosition = 0) }
-        updateState { it.copy(isSearch = isSearch) }
+        updateState { it.copy(isSearch = isSearch, isShowMenu = false, searchPosition = 0) }
+//        updateState { it.copy(isSearch = isSearch) }
     }
 
     override fun handleSearch(query: String?) {
@@ -145,8 +145,8 @@ class ArticleViewModel(private val articleId: String) :
             .indexesOf(query)
             .map { it to it + query.length }
         updateState {
-//            it.copy(searchQuery = query, searchResults = result, searchPosition = 0)
-            it.copy(searchQuery = query, searchResults = result)
+            it.copy(searchQuery = query, searchResults = result, searchPosition = 0)
+//            it.copy(searchQuery = query, searchResults = result)
         }
     }
 
